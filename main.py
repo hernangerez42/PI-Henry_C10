@@ -7,7 +7,7 @@ import re
 
 app = FastAPI()
 
-df = pd.read_csv("dataset/movies_dataset_trabajado.csv")
+df = pd.read_csv("Dataset/movies_dataset_trabajado.csv")
 
 @app.get("/")
 def read_root():
