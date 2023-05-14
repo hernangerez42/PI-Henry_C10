@@ -1,6 +1,10 @@
 from fastapi import FastAPI
 import pandas as pd
 import numpy as np
+import sklearn
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import randomized_svd
 import uvicorn
 import re
 
@@ -100,4 +104,41 @@ def retorno(pelicula:str):
     #calculamos el año
     anio = df_movies['release_year'].mean()
     return {'pelicula':pelicula, 'inversion':inversion, 'ganacia':ganancia,'retorno':retorno, 'anio':anio}
+
+
+# Recomendacion de peliculas
+# Vectorización de los títulos
+vectorizer = TfidfVectorizer(stop_words='english')
+X = vectorizer.fit_transform(df['title'])
+
+# Descomposición en valores singulares aleatorios (randomized SVD)
+u, s, vt = randomized_svd(X, n_components=100)
+
+# Cálculo de la similitud de coseno
+def cosine_similarities(x, y):
+    return np.dot(x, y.T)
+
+
+# Recomendación de títulos similares
+@app.get("/get_recomendacion/{title}")
+def get_recommendacion(title):
+    # Vectorización del título de entrada
+    title_vec = vectorizer.transform([title])
+
+    # Reducción de dimensionalidad del título de entrada
+    title_vec_reduced = title_vec.dot(vt.T)
+
+    # Cálculo de la similitud de coseno
+    sim = cosine_similarities(title_vec_reduced, u.dot(np.diag(s)))
+
+    # Ordenamiento de los títulos según su similitud de coseno
+    sim_scores = list(enumerate(sim[0]))
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+
+    # Recomendación de títulos similares
+    sim_scores = sim_scores[1:6]
+    indices = [i[0] for i in sim_scores]
+    titles = df.iloc[indices]['title']
+
+    return {'recomendacion':titles.tolist()}
 
