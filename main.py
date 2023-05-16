@@ -21,6 +21,8 @@ def read_root():
 def peliculas_mes(mes):
     '''Se ingresa el mes y la funcion retorna la cantidad de peliculas que se estrenaron ese mes 
     (nombre del mes, en str, ejemplo 'enero') historicamente'''
+    #Convertimos a minusculas por si un usuario lo escribe en mayusculas
+    mes = mes.lower()
     # Creamos un diccionario con los meses y su numero correspondiente
     meses = {'enero': 1.0, 'febrero': 2.0, 'marzo': 3.0, 'abril': 4.0, 'mayo': 5.0, 'junio': 6.0, 'julio': 7.0, 'agosto': 8.0,
              'septiembre': 9.0, 'octubre': 10.0, 'noviembre': 11.0, 'diciembre': 12.0}
@@ -37,6 +39,8 @@ def peliculas_mes(mes):
 def peliculas_dia(dia:str):
     '''Se ingresa el dia y la funcion retorna la cantidad de peliculas que se estrenaron ese dia 
     (de la semana, en str, ejemplo 'lunes') historicamente'''
+    #Convertimos a minusculas por si un usuario lo escribe en mayusculas
+    dia = dia.lower()
     # Creamos un diccionario con los dias y su numero correspondiente
     dias = {'lunes': 0.0, 'martes': 1.0, 'miercoles': 2.0, 'jueves': 3.0, 'viernes': 4.0, 'sabado': 5.0, 'domingo': 6.0}
     # Controlamos que el dia ingresado sea correcto
@@ -79,8 +83,6 @@ def peliculas_pais(pais:str):
 @app.get("/productoras/{productora}")
 def productoras(productora:str):
     '''Ingresas la productora, retornando la ganancia total y la cantidad de peliculas que produjeron'''
-    #eliminamos los espacios en blanco al principio y al final
-    productora = productora.strip()
     #Convertimos la productora a minusculas por si un usuario lo escribe en mayusculas
     productora = productora.lower()
     # Filtramos por productora
@@ -93,6 +95,8 @@ def productoras(productora:str):
 
 @app.get("/retorno/{pelicula}")
 def retorno(pelicula:str):
+    #Convertimos en minusculas por si un usuario lo escribe en mayusculas
+    pelicula = pelicula.lower()
     #filtramos por pelicula
     df_movies = df[df['title'] == pelicula]
     #calculamos la inversion
